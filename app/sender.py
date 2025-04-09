@@ -4,13 +4,17 @@ import json
 import requests
 
 # Load the data
-df = pd.read_csv("ip_addresses.csv")  # Replace with your actual file path
+df = pd.read_csv("ip_addresses.csv")
+
+# Sort by timestamp
 df = df.sort_values("Timestamp")
+
+# Create new feature "Date"
 df["Date"] = pd.to_datetime(df["Timestamp"], unit='s')
 
 # Prepare the sending function
 def send_package(row):
-    url = "http://localhost:8000/endpoint"  # Replace with actual endpoint
+    url = "http://localhost:8000/endpoint"
     payload = {
         "ip_address": row["ip address"],
         "latitude": row["Latitude"],

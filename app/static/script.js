@@ -1,18 +1,28 @@
+// Create map instance
 const map = L.map('map', {
-    center: [25, 0],        // or whatever your default center is
+    center: [25, 0],        // default center
     zoom: 2,                // starting zoom
     minZoom: 2,             // can't zoom out further
     maxZoom: 10             // can't zoom in further
   });
+
+// Add OpenStreetMap tile layer to the map
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
+
+// Connect to backend via Socket.IO
 const socket = io();
 
+// Store all active markers for reference
 const markers = [];
 
+// Used to calculate difference in seconds for activity chart
 let startTime = 0;
 
+// Add a marker to the map
 function addMarker(lat, lon, ip, date, isSuspicious) {
     const color = isSuspicious ? 'red' : 'rgba(74, 144, 226, 1)';
+    
+    // Create a circle marker
     const marker = L.circleMarker([lat, lon], {
         color: color,
         weight: 2,
@@ -20,12 +30,14 @@ function addMarker(lat, lon, ip, date, isSuspicious) {
         fillOpacity: 0.7
     }).addTo(map);
 
+    // Build tooltip content
     const infoText = `
     <strong>IP:</strong> ${ip}<br>
     <strong>Date:</strong> ${new Date(date).toISOString().split('T')[0]}<br>
     <strong>Time:</strong> ${new Date(date).toTimeString().split(' ')[0]}<br>
     <strong>Suspicious:</strong> ${isSuspicious ? 'Yes' : 'No'}`;
 
+    // Attach tooltip to marker (only shows on hover)
     marker.bindTooltip(infoText, {
     permanent: false,      // only show on hover
     direction: 'top',      // place above marker
@@ -34,11 +46,14 @@ function addMarker(lat, lon, ip, date, isSuspicious) {
     });
 
     markers.push(marker);
+
     // Start fade after 8 seconds
     setTimeout(() => {
         const icon = marker.getElement();
         if (icon) icon.classList.add('fade-out');
-    }, 8000);  // Start fading after 8s
+    }, 8000);
+
+    // Remove marker from map after 10 seconds
     setTimeout(() => map.removeLayer(marker), 10000);
 }
 
@@ -85,8 +100,6 @@ const config = {
                 }
             },
             y: {
-                min: 0,
-                max: 12,
                 stacked: true,
                 beginAtZero: true,
                 title: {
@@ -98,15 +111,15 @@ const config = {
     }
 };
 
+// Create the Chart instance
 const activityChart = new Chart(ctx, config);
 
-// Store the packet counts in an object
-let packetCounts = {};
-
+// Start the backend packet capturing script
 function startScript() {
     fetch('/start-script', { method: 'POST' })
         .then(res => res.json());
     
+    // Reset chart and timer
     activityChart.data.labels = [];
     activityChart.data.datasets[0].data = [];
     activityChart.data.datasets[1].data = [];
@@ -114,31 +127,36 @@ function startScript() {
     startTime = 0;
 }
 
+// Stop the backend script
 function stopScript() {
     fetch('/stop-script', { method: 'POST' })
         .then(res => res.json());
 }
 
+// Update chart with new data
 function update_Chart(timestamp, isSuspicious) {
     if (!startTime) {
+        // First timestamp received
         startTime = timestamp;
     }
 
     const currentTime = timestamp - startTime;
 
+    // Rolling window size in seconds
     const windowSize = 10;
     const oldestAllowed = currentTime - windowSize;
 
     // If the label already exists, increment corresponding count
     const index = activityChart.data.labels.indexOf(currentTime);
     if (index !== -1) {
+        // Increment existing value
         if (isSuspicious) {
             activityChart.data.datasets[1].data[index]++;
         } else {
             activityChart.data.datasets[0].data[index]++;
         }
     } else {
-        // First, remove outdated entries before adding new one
+        // First, remove outdated data before adding new one
         while (activityChart.data.labels.length > 0 &&
                activityChart.data.labels[0] < oldestAllowed) {
             activityChart.data.labels.shift();
@@ -152,13 +170,15 @@ function update_Chart(timestamp, isSuspicious) {
         activityChart.data.datasets[1].data.push(isSuspicious ? 1 : 0);
     }
 
+    // Redraw chart
     activityChart.update();
 }
 
+// Handle incoming socket data
 socket.on("new_package", (data) => {
-    console.log('Before Adding:', activityChart.data);
+    // Update chart with new data point
     update_Chart (data.timestamp, data.suspicious);
-    console.log('After Adding:', activityChart.data);
 
+    // Add packet location to map
     addMarker(data.latitude, data.longitude, data.ip_address, data.date, data.suspicious);
 });
