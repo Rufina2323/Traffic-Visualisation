@@ -47,15 +47,22 @@ docker-compose down
 
 ```bash
 .
-├── static/                 # JS, CSS, chart/map logic
-├── templates/
-│   └── index.html          # Frontend UI
-├── sender.py               # Packet generator (simulated traffic)
-├── server.py               # Flask + Socket.IO backend
+├── app/
+│  ├── static/              # JS, CSS, chart/map logic
+│  │   ├── script.js       
+│  │   └── style.css        
+│  ├── templates/
+│  │   └── index.html       # HTML frontend (UI)
+│  ├── ip_addresses.csv     # List of IPs for simulation
+│  ├── sender.py            # Packet generator (simulated traffic)
+│  └── server.py            # Flask + Socket.IO backend
+├── .gitignore              # Files and folders to ignore in Git
 ├── Dockerfile              # Container config
 ├── docker-compose.yml      # App + service orchestrator
+├── requirements.txt        # Python dependencies
 └── README.md               # You're here!
 ```
+
 
 
 
