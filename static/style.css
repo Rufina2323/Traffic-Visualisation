@@ -4,21 +4,93 @@ body {
 }
 #map {
     height: 90vh;
-    width: 75%;
-}
-#sidebar {
-    width: 25%;
+    width: 70%;
     float: right;
-    padding: 10px;
-    background: #f4f4f4;
-    height: 90vh;
-    overflow-y: auto;
 }
-h2 {
-    margin: 10px;
+  
+#activityChart {
+    width: 100%;
+    height: 300px;
+}
+  
+.dashboard-title {
+    background-color: #f9f9f9;
+    color: #2c3e50;
+    font-size: 1.5rem;
+    padding: 6px 12px;
+    text-align: center;
+    border-radius: 12px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    font-family: 'Segoe UI', sans-serif;
+    margin: 10px auto;
+    max-width: 800px;
+    letter-spacing: 0.5px;
 }
 
 .leaflet-interactive.fade-out {
     transition: opacity 2s ease-out;
     opacity: 0;
-  }
+}
+
+.box {
+    max-width: 27%;
+    max-height: 300px;
+    background-color: #f9f9f9;
+    border-left: 6px solid #4a90e2;
+    padding: 10px;
+    margin: 0.5%;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+    font-family: 'Segoe UI', sans-serif;
+}
+
+.box h2 {
+    margin: 0;
+    margin-top: 0;
+    color: #333;
+    font-size: 1rem;
+    text-align: center;
+}
+
+.box ul {
+    padding-left: 20px;
+    margin: 0;
+}
+
+.box li {
+    margin-bottom: 2px;
+    line-height: 1.6;
+    font-size: 0.85rem;
+}
+
+
+.btn {
+    background-color: #4a90e2;
+    color: #fff;
+    border: none;
+    padding: 7px 12px;
+    font-size: 1rem;
+    font-weight: 600;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.1s ease;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    margin-left: 3%;
+    margin-top: 0.5%;
+    font-family: 'Segoe UI', sans-serif;
+}
+
+.btn:hover {
+    background-color: #3a78c2;
+}
+
+.btn:active {
+    transform: scale(0.98);
+    background-color: #2e65a2;
+}
+
+.btn:disabled {
+    background-color: #cccccc;
+    cursor: not-allowed;
+    box-shadow: none;
+}

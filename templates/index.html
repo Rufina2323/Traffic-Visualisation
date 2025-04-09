@@ -1,19 +1,34 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Sender Location Map</title>
+    <title>Web Traffic Map</title>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.3/dist/leaflet.css" />
     <link rel="stylesheet" href="/static/style.css" />
 </head>
 <body>
-    <h2>📡 Sender Location Dashboard</h2>
+    <h2 class="dashboard-title">&#128225 Simulation of Real-Time Packet Map &#128225</h2>
     <div id="map"></div>
-    <div id="sidebar">
-        <h3>Top Locations</h3>
-        <ul id="location-list"></ul>
-    </div>
+    <div class="box">
+        <h2>&#128205; How to Use?</h2>
+        <ul>
+            <li>&#127757; Each point on the map represents an incoming package.</li>
+            <li>&#128997; Red markers show <strong>suspicious activity</strong>.</li>
+            <li>&#129001; Green markers show <strong>normal activity</strong>.</li>
+            <li>&#128070; Hover over a point to see IP address and status details.</li>
+            <li>&#128202; Check the activity graph for real-time traffic trends.</li>
+            <li>&#128257; Markers fade out after 10 seconds to reduce clutter.</li>
+            <li>&#9654;&#65039; Use the start/stop buttons to control data simulation.</li>
+        </ul>
+      </div>
+    <button class="btn", onclick="startScript()">&#9654 Start Sending</button>
+    <button class="btn", onclick="stopScript()">&#9209 Stop Sending</button>
+
+    <div class="box">
+        <canvas id="activityChart"></canvas>
+      </div>
     <script src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js"></script>
     <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="/static/script.js"></script>
 </body>
 </html>

@@ -1,8 +1,10 @@
 from flask import Flask, request, jsonify, render_template
-from flask_socketio import SocketIO, emit
+from flask_socketio import SocketIO
 from flask_cors import CORS
-import json
 from flask import Flask, request, jsonify
+import subprocess
+import os
+import signal
 
 
 app = Flask(__name__)
@@ -10,6 +12,9 @@ CORS(app)
 socketio = SocketIO(app, cors_allowed_origins="*")  # Enable real-time sockets
 
 received_packages = []
+
+# Global variable to store the process
+process = None
 
 @app.route('/')
 def index():
@@ -36,6 +41,25 @@ def receive_package():
 @app.route('/data')
 def get_data():
     return jsonify(received_packages), 200
+
+@app.route('/start-script', methods=['POST'])
+def start_script():
+    global process
+    if process is None or process.poll() is not None:  # Not running
+        process = subprocess.Popen(['python', 'sender.py'])
+        return jsonify({'message': 'Script started'})
+    else:
+        return jsonify({'message': 'Script is already running'})
+    
+@app.route('/stop-script', methods=['POST'])
+def stop_script():
+    global process
+    if process and process.poll() is None:  # Still running
+        os.kill(process.pid, signal.SIGTERM)
+        process = None
+        return jsonify({'message': 'Script stopped'})
+    else:
+        return jsonify({'message': 'No script is running'})
 
 if __name__ == '__main__':
     socketio.run(app, debug=True, port=8000)

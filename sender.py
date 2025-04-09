@@ -20,8 +20,7 @@ def send_package(row):
         "suspicious": int(row["suspicious"])
     }
     headers = {'Content-Type': 'application/json'}
-    response = requests.post(url, data=json.dumps(payload), headers=headers)
-    print(f"Sent: {payload} | Response: {response.status_code}")
+    requests.post(url, data=json.dumps(payload), headers=headers)
 
 # Send packages with timing
 last_time = None
